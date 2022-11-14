@@ -5,12 +5,16 @@ using Notification_AWS.Repository;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<DataContext>();
+builder.Services.AddScoped<SqsConsumer>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 
 var app = builder.Build();
 
-IFileRepository service = app.Services.GetRequiredService<IFileRepository>();
+//app.MapGet("/", async () => await SqsConsumer.Noification(service));
 
-app.MapGet("/", async () => await SqsConsumer.Noification(service));
+app.MapGet("/", async (IFileRepository fileRepository, SqsConsumer SqsConsumer) =>
+{
+    await SqsConsumer.Noification(fileRepository);
+});
 
 app.Run();
