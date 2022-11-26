@@ -9,7 +9,7 @@ namespace Notification_AWS
     public class SqsConsumer
     {
         private const string quereSQS = "https://sqs.sa-east-1.amazonaws.com/493103478301/My-Stack-StandardQueue-ErjE3wksE1AG";
-        public static async Task Noification(IFileRepository fileRepository)
+        public async Task Noification(IFileRepository fileRepository)
         {
             var client = new AmazonSQSClient(RegionEndpoint.SAEast1);
             var request = new ReceiveMessageRequest
@@ -21,14 +21,14 @@ namespace Notification_AWS
             {
                 var response = await client.ReceiveMessageAsync(request);
 
-                foreach (var mensagem in response.Messages)
+                foreach (var messages in response.Messages)
                 {
-                    Console.WriteLine(mensagem.Body);
+                    Console.WriteLine(messages.Body);
 
-                    fileRepository.InsertFile(new Files() { Filename = "", Filesize = "", Last_modified = DateTime.Now });
+                    //fileRepository.InsertFile(new Files() { Filename = mensagem.Body, Filesize = response.ContentLength, Last_modified = DateTime.Now });
                     fileRepository.Save();
 
-                    await client.DeleteMessageAsync(quereSQS, mensagem.ReceiptHandle);
+                    await client.DeleteMessageAsync(quereSQS, messages.ReceiptHandle);
                 }
             }
         }

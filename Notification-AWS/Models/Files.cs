@@ -9,7 +9,7 @@ namespace Notification_AWS.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public string Filename { get; set; }
-        public string Filesize { get; set; }
+        public long Filesize { get; set; }
         public DateTime Last_modified { get; set; }
     }
 }
